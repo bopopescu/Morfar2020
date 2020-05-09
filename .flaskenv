@@ -1,0 +1,1 @@
+FLASK_APP=morfar2020.py
