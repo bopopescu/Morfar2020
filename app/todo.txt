@@ -1,0 +1,8 @@
+PALMER
+Crear formulario y funcion que devuelvan en formato JSON todas las revisiones de un lugar.
+
+MAMER
+Crear formulario y funcion que devuelvan en formato JSON todas las revisiones de un usuario.
+
+MONCHO
+Crear formulario y funcion que devuelvan en formato JSON todas las revisiones de un platillo.

@@ -58,3 +58,27 @@ def insertar():
 
     print(cursor.rowcount, "record inserted.")
     return render_template('success.html', title='Success', rows=cursor.rowcount)
+
+@app.route('/buscarLugares')
+def buscarLugares():
+    return render_template('buscadorLugares.html')
+
+@app.route('/resultadoLugares', methods=["POST"])
+def resultadoLugares():
+    mydb = mysql.connector.connect(
+    host="35.209.8.46",
+    user="abovemed_morfar",
+    db="abovemed_morfar2020",
+    get_warnings=True,
+    connect_timeout=60000,
+    passwd="Watermelon123!"
+    )
+    cursor = mydb.cursor()
+    IdLugar = request.form.get('IdLugar')
+    query = ("SELECT Revisiones.Puntaje, Revisiones.TextoRevision, Platos.NombrePlato, Lugares.idLugar FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar WHERE Platos.idLugar = %s" % IdLugar)
+    
+
+    cursor.execute(query)
+
+    rows = cursor.fetchall()
+    return jsonify(rows)
