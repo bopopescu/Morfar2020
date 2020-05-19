@@ -1,0 +1,9 @@
+<h1>This is a form</h1>
+
+<form action="{{ url_for('insertar') }}" method="POST">
+    <input type="text" name="IdPlato" placeholder="ID del Plato">
+    <input type="text" name="IdUsuario" placeholder="ID del Usuario">
+    <input type="text" name="Puntaje" placeholder="Puntaje">
+    <textarea name="Texto" placeholder="Texto de la revisión"></textarea>
+    <input type="submit" value="Añadir Revisión">
+</form>
