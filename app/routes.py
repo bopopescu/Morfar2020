@@ -89,6 +89,8 @@ def buscarPlatos():
 
 @app.route('/resultadoPlatos', methods=["POST"])
 def resultadoPlatos():
+
+
     mydb = mysql.connector.connect(
     host="35.209.8.46",
     user="abovemed_morfar",
@@ -106,3 +108,27 @@ def resultadoPlatos():
 
     rows = cursor.fetchall()
     return jsonify(rows)
+
+@app.route('/buscarUsuarios')
+def buscarUsuarios():
+    return render_template('buscadorUsuarios.html')
+
+@app.route('/resultadoUsuarios', methods=["POST"])
+def resultadoUsuarios():
+
+
+
+    mydb = mysql.connector.connect(
+    host="35.209.8.46",
+    user="abovemed_morfar",
+    db="abovemed_morfar2020",
+    get_warnings=True,
+    connect_timeout=60000,
+    passwd="Watermelon123!"
+    )
+    cursor = mydb.cursor()
+    IdUsuario = request.form.get('IdUsuario')
+    query = ("SELECT Platos.NombrePlato, Lugares.nombreLugar, Revisiones.Puntaje, Revisiones.TextoRevision, Usuarios.Apellido, Usuarios.Nombre FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar INNER JOIN Usuarios on Revisiones.IdUsuario = Usuarios.IdUsuario WHERE Usuarios.IdUsuario = %s" % IdUsuario)
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    return jsonify(rows) 
