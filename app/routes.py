@@ -82,3 +82,27 @@ def resultadoLugares():
 
     rows = cursor.fetchall()
     return jsonify(rows)
+
+@app.route('/buscarPlatos')
+def buscarPlatos():
+    return render_template('buscadorPlatos.html')
+
+@app.route('/resultadoPlatos', methods=["POST"])
+def resultadoPlatos():
+    mydb = mysql.connector.connect(
+    host="35.209.8.46",
+    user="abovemed_morfar",
+    db="abovemed_morfar2020",
+    get_warnings=True,
+    connect_timeout=60000,
+    passwd="Watermelon123!"
+    )
+    cursor = mydb.cursor()
+    IdPlato = request.form.get('IdPlato')
+    query = ("SELECT Platos.IdPlato, Lugares.nombreLugar, Revisiones.Puntaje, Revisiones.TextoRevision, Usuarios.IdUsuario, Usuarios.Apellido, Usuarios.Nombre FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar INNER JOIN Usuarios on Revisiones.IdUsuario = Usuarios.IdUsuario WHERE Platos.Idplato = %s" % IdPlato)
+    
+
+    cursor.execute(query)
+
+    rows = cursor.fetchall()
+    return jsonify(rows)
