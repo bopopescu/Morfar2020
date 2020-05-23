@@ -128,7 +128,7 @@ def resultadoUsuarios():
     )
     cursor = mydb.cursor()
     IdUsuario = request.form.get('IdUsuario')
-    query = ("SELECT Platos.NombrePlato, Lugares.nombreLugar, Revisiones.Puntaje, Revisiones.TextoRevision, Usuarios.Apellido, Usuarios.Nombre FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar INNER JOIN Usuarios on Revisiones.IdUsuario = Usuarios.IdUsuario WHERE Usuarios.IdUsuario = %s" % IdUsuario)
+    query = ("SELECT Usuarios.Apellido, Usuarios.Nombre, Platos.NombrePlato, Lugares.nombreLugar, Revisiones.Puntaje, Revisiones.TextoRevision FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar INNER JOIN Usuarios on Revisiones.IdUsuario = Usuarios.IdUsuario WHERE Usuarios.IdUsuario = %s" % IdUsuario)
     cursor.execute(query)
     rows = cursor.fetchall()
     return jsonify(rows) 
