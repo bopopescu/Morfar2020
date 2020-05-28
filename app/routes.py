@@ -1,4 +1,5 @@
 import mysql.connector
+import app.dbConfig as config
 from flask import render_template
 from app import app
 from flask import jsonify
@@ -9,17 +10,15 @@ from flask import request
 @app.route('/index')
 def index():
     user = {'username': 'Miguel'}
-    return render_template('index.html', title='Home', user=user)
+    return render_template('index.html', title='Le damos la bienvenida a la demo Morfar2020', user=user)
 
 @app.route('/reporte')
 def reporte():
     mydb = mysql.connector.connect(
-    host="35.209.8.46",
-    user="abovemed_morfar",
-    db="abovemed_morfar2020",
-    get_warnings=True,
-    connect_timeout=60000,
-    passwd="Watermelon123!"
+    host=config.host,
+    user=config.user,
+    db=config.db,
+    passwd=config.passwd
     )
     cursor = mydb.cursor()
 
@@ -37,12 +36,10 @@ def post():
 @app.route('/insertar/', methods=['POST'])
 def insertar():
     mydb = mysql.connector.connect(
-    host="35.209.8.46",
-    user="abovemed_morfar",
-    db="abovemed_morfar2020",
-    get_warnings=True,
-    connect_timeout=60000,
-    passwd="Watermelon123!"
+    host=config.host,
+    user=config.user,
+    db=config.db,
+    passwd=config.passwd
     )
     cursor = mydb.cursor()
 
@@ -66,12 +63,10 @@ def buscarLugares():
 @app.route('/resultadoLugares', methods=["POST"])
 def resultadoLugares():
     mydb = mysql.connector.connect(
-    host="35.209.8.46",
-    user="abovemed_morfar",
-    db="abovemed_morfar2020",
-    get_warnings=True,
-    connect_timeout=60000,
-    passwd="Watermelon123!"
+    host=config.host,
+    user=config.user,
+    db=config.db,
+    passwd=config.passwd
     )
     cursor = mydb.cursor()
     IdLugar = request.form.get('IdLugar')
@@ -89,13 +84,11 @@ def buscarPlatos():
 
 @app.route('/resultadoPlatos', methods=["POST"])
 def resultadoPlatos():
-    mydb = mysql.connector.connect(
-    host="35.209.8.46",
-    user="abovemed_morfar",
-    db="abovemed_morfar2020",
-    get_warnings=True,
-    connect_timeout=60000,
-    passwd="Watermelon123!"
+   mydb = mysql.connector.connect(
+    host=config.host,
+    user=config.user,
+    db=config.db,
+    passwd=config.passwd
     )
     cursor = mydb.cursor()
     IdPlato = request.form.get('IdPlato')
