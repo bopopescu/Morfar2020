@@ -5,15 +5,34 @@ from app import app
 from flask import jsonify
 from flask import request
 
-
 @app.route('/')
 @app.route('/index')
 def index():
     user = {'username': 'Miguel'}
     return render_template('index.html', title='Le damos la bienvenida a la demo Morfar2020', user=user)
 
-@app.route('/reporte')
-def reporte():
+@app.route('/revisiones', methods=['POST'])
+def revisiones():
+    IdPlato = request.form.get('IdPlato')
+    if IdPlato == None:
+        IdPlato = 'IS NOT NULL'
+    else:
+        IdPlato = '= %s' % IdPlato
+    IdUsuario = request.form.get('IdUsuario')
+    if IdUsuario == None:
+        IdUsuario = 'IS NOT NULL'
+    else:
+         IdUsuario = '= %s' % IdUsuario
+    Puntaje = request.form.get('Puntaje')
+    if Puntaje == None:
+        Puntaje = 'IS NOT NULL'
+    else:
+        Puntaje = '= %s' % Puntaje
+    IdLugar = request.form.get('IdLugar')
+    if IdLugar == None:
+        IdLugar = 'IS NOT NULL'
+    else:
+        IdLugar = '= %s' % IdLugar
     mydb = mysql.connector.connect(
     host=config.host,
     user=config.user,
@@ -21,20 +40,13 @@ def reporte():
     passwd=config.passwd
     )
     cursor = mydb.cursor()
-
-    query = ("Select Usuarios.Nombre, Usuarios.Apellido, Platos.NombrePlato, Lugares.nombreLugar, Revisiones.Puntaje, Revisiones.TextoRevision from Revisiones inner join Usuarios  on Revisiones.IdUsuario = Usuarios.IdUsuario inner join Platos on Revisiones.IdPlato = Platos.IdPlato inner join Lugares on Platos.idLugar = Lugares.idLugar ORDER by Revisiones.Puntaje desc")
-
+    query = ("Select Usuarios.Nombre, Usuarios.Apellido, Platos.NombrePlato, Lugares.nombreLugar, Revisiones.Puntaje, Revisiones.TextoRevision from Revisiones inner join Usuarios  on Revisiones.IdUsuario = Usuarios.IdUsuario inner join Platos on Revisiones.IdPlato = Platos.IdPlato inner join Lugares on Platos.idLugar = Lugares.idLugar where Platos.IdPlato %s AND Usuarios.IdUsuario %s AND Revisiones.Puntaje %s AND Lugares.IdLugar %s" % (IdPlato, IdUsuario, Puntaje, IdLugar))
     cursor.execute(query)
-
     rows = cursor.fetchall()
     return jsonify(rows)
 
-@app.route('/post')
-def post():
-    return render_template('form.html')
-
-@app.route('/insertar/', methods=['POST'])
-def insertar():
+@app.route('/revisiones/new', methods=['POST'])
+def revisiones_new():
     mydb = mysql.connector.connect(
     host=config.host,
     user=config.user,
@@ -42,26 +54,27 @@ def insertar():
     passwd=config.passwd
     )
     cursor = mydb.cursor()
-
     IdPlato = request.form.get('IdPlato')
     IdUsuario = request.form.get('IdUsuario')
     Puntaje = request.form.get('Puntaje')
     Comentario = request.form.get('Texto')
-
     sql = "INSERT INTO Revisiones (IdPlato, IdUsuario, Puntaje, TextoRevision) VALUES (%s, %s, %s, %s)"
     val = (IdPlato, IdUsuario, Puntaje, Comentario)
+    if IdPlato == None:
+        return 'All fields are requred.'
+    if IdUsuario == None:
+        return 'All fields are requred.'
+    if Puntaje == None:
+        return 'All fields are requred.'
+    if Comentario == None:
+        return 'All fields are requred.'
     cursor.execute(sql, val)
     mydb.commit()
+    resultId = cursor.lastrowid
+    return jsonify(resultId)
 
-    print(cursor.rowcount, "record inserted.")
-    return render_template('success.html', title='Success', rows=cursor.rowcount)
-
-@app.route('/buscarLugares')
-def buscarLugares():
-    return render_template('buscadorLugares.html')
-
-@app.route('/resultadoLugares', methods=["POST"])
-def resultadoLugares():
+@app.route('/lugares', methods=["POST"])
+def lugares():
     mydb = mysql.connector.connect(
     host=config.host,
     user=config.user,
@@ -71,20 +84,13 @@ def resultadoLugares():
     cursor = mydb.cursor()
     IdLugar = request.form.get('IdLugar')
     query = ("SELECT Revisiones.Puntaje, Revisiones.TextoRevision, Platos.NombrePlato, Lugares.idLugar FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar WHERE Platos.idLugar = %s" % IdLugar)
-    
-
     cursor.execute(query)
-
     rows = cursor.fetchall()
     return jsonify(rows)
 
-@app.route('/buscarPlatos')
-def buscarPlatos():
-    return render_template('buscadorPlatos.html')
-
-@app.route('/resultadoPlatos', methods=["POST"])
-def resultadoPlatos():
-   mydb = mysql.connector.connect(
+@app.route('/platos', methods=["POST"])
+def platos():
+    mydb = mysql.connector.connect(
     host=config.host,
     user=config.user,
     db=config.db,
@@ -93,22 +99,12 @@ def resultadoPlatos():
     cursor = mydb.cursor()
     IdPlato = request.form.get('IdPlato')
     query = ("SELECT Platos.IdPlato, Lugares.nombreLugar, Revisiones.Puntaje, Revisiones.TextoRevision, Usuarios.IdUsuario, Usuarios.Apellido, Usuarios.Nombre FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar INNER JOIN Usuarios on Revisiones.IdUsuario = Usuarios.IdUsuario WHERE Platos.Idplato = %s" % IdPlato)
-    
-
     cursor.execute(query)
-
     rows = cursor.fetchall()
     return jsonify(rows)
 
-@app.route('/buscarUsuarios')
-def buscarUsuarios():
-    return render_template('buscadorUsuarios.html')
-
-@app.route('/resultadoUsuarios', methods=["POST"])
-def resultadoUsuarios():
-
-
-
+@app.route('/usuarios', methods=["POST"])
+def usuarios():
     mydb = mysql.connector.connect(
     host="35.209.8.46",
     user="abovemed_morfar",
@@ -123,3 +119,4 @@ def resultadoUsuarios():
     cursor.execute(query)
     rows = cursor.fetchall()
     return jsonify(rows) 
+

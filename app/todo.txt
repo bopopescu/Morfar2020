@@ -1,8 +1,8 @@
 PALMER
-Crear formulario y funcion que devuelvan en formato JSON todas las revisiones de un lugar.
+Crear funcion para filtrar platos por lugar o por id
 
 MAMER
-Crear formulario y funcion que devuelvan en formato JSON todas las revisiones de un usuario.
+Ruta y funcion para crear nuevo plato
 
 MONCHO
-Crear formulario y funcion que devuelvan en formato JSON todas las revisiones de un platillo.
+Ruta y funcion para crear nuevo lugar
