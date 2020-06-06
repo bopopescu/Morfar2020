@@ -73,8 +73,13 @@ def revisiones_new():
     resultId = cursor.lastrowid
     return jsonify(resultId)
 
-@app.route('/lugares', methods=["POST"])
+@app.route('/lugares', methods=['POST'])
 def lugares():
+    IdLugar = request.form.get('IdLugar')
+    if IdLugar == None:
+        IdLugar = 'IS NOT NULL'
+    else:
+        IdLugar = '= %s' % IdLugar
     mydb = mysql.connector.connect(
     host=config.host,
     user=config.user,
@@ -82,11 +87,29 @@ def lugares():
     passwd=config.passwd
     )
     cursor = mydb.cursor()
-    IdLugar = request.form.get('IdLugar')
-    query = ("SELECT Revisiones.Puntaje, Revisiones.TextoRevision, Platos.NombrePlato, Lugares.idLugar FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar WHERE Platos.idLugar = %s" % IdLugar)
+    query = ("Select * from Lugares where IdLugar %s" % (IdLugar))
     cursor.execute(query)
     rows = cursor.fetchall()
     return jsonify(rows)
+
+@app.route('/lugares/new', methods=['POST'])
+def lugares_new():
+    mydb = mysql.connector.connect(
+    host=config.host,
+    user=config.user,
+    db=config.db,
+    passwd=config.passwd
+    )
+    cursor = mydb.cursor()
+    nombreLugar = request.form.get('nombreLugar')
+    sql = "INSERT INTO Lugares (nombreLugar) VALUES (%s)"
+    val = (nombreLugar)
+    if nombreLugar == None:
+        return 'All fields are requred.'
+    cursor.execute(sql, (val,))
+    mydb.commit()
+    resultId = cursor.lastrowid
+    return jsonify(resultId)
 
 @app.route('/platos', methods=["POST"])
 def platos():
