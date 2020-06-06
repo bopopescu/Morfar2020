@@ -119,9 +119,23 @@ def platos():
     db=config.db,
     passwd=config.passwd
     )
-    cursor = mydb.cursor()
     IdPlato = request.form.get('IdPlato')
-    query = ("SELECT Platos.IdPlato, Lugares.nombreLugar, Revisiones.Puntaje, Revisiones.TextoRevision, Usuarios.IdUsuario, Usuarios.Apellido, Usuarios.Nombre FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar INNER JOIN Usuarios on Revisiones.IdUsuario = Usuarios.IdUsuario WHERE Platos.Idplato = %s" % IdPlato)
+    NombrePlato = request.form.get('NombrePlato')
+    IdLugar = request.form.get('IdLugar')
+    if IdPlato == None:
+        IdPlato = "IS NOT NULL"
+    else:
+        IdPlato = "= %s" % IdPlato
+    if NombrePlato == None:
+       NombrePlato = 'IS NOT NULL'
+    else:   
+        NombrePlato = "LIKE %s%s%s" % ("'%",NombrePlato,"%'")
+    if IdLugar == None:
+        IdLugar = "IS NOT NULL"
+    else:
+        IdLugar = "= %s" % IdLugar
+    cursor = mydb.cursor()
+    query = ("SELECT * FROM Platos WHERE IdPlato %s AND NombrePlato %s AND IdLugar %s" % (IdPlato, NombrePlato, IdLugar))
     cursor.execute(query)
     rows = cursor.fetchall()
     return jsonify(rows)
