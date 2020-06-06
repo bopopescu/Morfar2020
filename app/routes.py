@@ -139,6 +139,32 @@ def platos():
     cursor.execute(query)
     rows = cursor.fetchall()
     return jsonify(rows)
+    
+@app.route('/platos/new', methods=['POST'])
+def platos_new():
+    mydb = mysql.connector.connect(
+    host="35.209.8.46",
+    user="abovemed_morfar",
+    db="abovemed_morfar2020",
+    get_warnings=True,
+    connect_timeout=60000,
+    passwd="Watermelon123!"
+    )
+    cursor = mydb.cursor()
+    NombrePlato = request.form.get('NombrePlato')
+    IdLugar = request.form.get('IdLugar')
+    if NombrePlato == None:
+        return 'All fields are required.'
+    if IdLugar == None:
+        return 'All fields are required.'
+    sql = "INSERT INTO Platos (NombrePlato, IdLugar) VALUES (%s, %s)"
+    val = (NombrePlato, IdLugar)
+    cursor.execute(sql,val)
+    mydb.commit()
+    resultId = cursor.lastrowid
+    return jsonify(resultId)
+
+
 
 @app.route('/usuarios', methods=["POST"])
 def usuarios():
