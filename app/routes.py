@@ -1,15 +1,8 @@
 import mysql.connector
 import app.dbConfig as config
-from flask import render_template
 from app import app
 from flask import jsonify
 from flask import request
-
-@app.route('/')
-@app.route('/index')
-def index():
-    user = {'username': 'Miguel'}
-    return render_template('index.html', title='Le damos la bienvenida a la demo Morfar2020', user=user)
 
 @app.route('/revisiones', methods=['POST'])
 def revisiones():
@@ -61,13 +54,13 @@ def revisiones_new():
     sql = "INSERT INTO Revisiones (IdPlato, IdUsuario, Puntaje, TextoRevision) VALUES (%s, %s, %s, %s)"
     val = (IdPlato, IdUsuario, Puntaje, Comentario)
     if IdPlato == None:
-        return 'All fields are requred.'
+        return 'All fields are required.'
     if IdUsuario == None:
-        return 'All fields are requred.'
+        return 'All fields are required.'
     if Puntaje == None:
-        return 'All fields are requred.'
+        return 'All fields are required.'
     if Comentario == None:
-        return 'All fields are requred.'
+        return 'All fields are required.'
     cursor.execute(sql, val)
     mydb.commit()
     resultId = cursor.lastrowid
