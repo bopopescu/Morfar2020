@@ -155,19 +155,21 @@ def platos_new():
     resultId = cursor.lastrowid
     return jsonify(resultId)
 
-
-
 @app.route('/usuarios', methods=["POST"])
 def usuarios():
     mydb = mysql.connector.connect(
-    host=config.host,
-    user=config.user,
-    db=config.db,
-    passwd=config.passwd
+        host=config.host,
+        user=config.user,
+        db=config.db,
+        passwd=config.passwd
     )
     cursor = mydb.cursor()
-    IdUsuario = request.form.get('IdUsuario')
-    query = ("SELECT Usuarios.Apellido, Usuarios.Nombre, Platos.NombrePlato, Lugares.nombreLugar, Revisiones.Puntaje, Revisiones.TextoRevision FROM Revisiones INNER JOIN Platos on Revisiones.IdPlato = Platos.IdPlato INNER JOIN Lugares on Platos.idLugar = Lugares.idLugar INNER JOIN Usuarios on Revisiones.IdUsuario = Usuarios.IdUsuario WHERE Usuarios.IdUsuario = %s" % IdUsuario)
+    query = ("SELECT IdUsuario, Nombre, Apellido, Correo FROM Usuarios")
+    if request.form.get('IdUsuario') != None:
+        query = query  + (" WHERE IdUsuario = %s" % (request.form.get("IdUsuario")))
+    if request.form.get('Correo') != None:  
+        query = query  + (" WHERE Correo = %s" % (request.form.get("Correo")))
     cursor.execute(query)
     rows = cursor.fetchall()
     return jsonify(rows)
+    
