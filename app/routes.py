@@ -172,4 +172,29 @@ def usuarios():
     cursor.execute(query)
     rows = cursor.fetchall()
     return jsonify(rows)
+
+@app.route('/usuarios/new', methods=['POST'])
+def usuarios_new():
+    mydb = mysql.connector.connect(
+    host=config.host,
+    user=config.user,
+    db=config.db,
+    passwd=config.passwd
+    )
+    cursor = mydb.cursor()
+    NombreUsuario = request.form.get('NombreUsuario')
+    ApellidoUsuario = request.form.get('ApellidoUsuario')
+    CorreoUsuario = request.form.get('CorreoUsuario')
+    if NombreUsuario == None:
+        return 'All fields are required'
+    if ApellidoUsuario == None:
+        return 'All fields are required'
+    if CorreoUsuario == None:
+        return 'All fields are required'
+    sql = "INSERT INTO Usuarios (Nombre, Apellido, Correo) VALUES (%s, %s, %s)"
+    val = (NombreUsuario, ApellidoUsuario, CorreoUsuario)
+    cursor.execute(sql,val)
+    mydb.commit()
+    resultId = cursor.lastrowid
+    return jsonify(resultId)
     
